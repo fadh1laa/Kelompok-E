@@ -592,9 +592,9 @@ Digunakan untuk mengunggah dokumen yang diperlukan dalam proses pengajuan sewa.
     "id": 1,
     "application_id": 1,
     "document_type": "ktp",
-    "file_name": "ktp_budi_santoso.pdf",
     "file_url": "/storage/documents/ktp_budi_santoso.pdf",
-    "uploaded_at": "2026-10-05T16:30:00Z"
+    "status": "pending",
+    "created_at": "2026-10-05T16:30:00Z"
   }
 }
 ```
@@ -634,9 +634,10 @@ Digunakan untuk menampilkan daftar dokumen yang telah diunggah pada suatu pengaj
       "id": 1,
       "application_id": 1,
       "document_type": "ktp",
-      "file_name": "ktp_budi_santoso.pdf",
       "file_url": "/storage/documents/ktp_budi_santoso.pdf",
-      "uploaded_at": "2026-10-05T16:30:00Z"
+      "status": "pending",
+      "created_at": "2026-10-05T16:30:00Z",
+      "updated_at": "2026-10-05T16:30:00Z"
     }
   ]
 }
@@ -674,9 +675,10 @@ Digunakan untuk menampilkan informasi detail dokumen pengajuan berdasarkan ID do
     "id": 1,
     "application_id": 1,
     "document_type": "ktp",
-    "file_name": "ktp_budi_santoso.pdf",
     "file_url": "/storage/documents/ktp_budi_santoso.pdf",
-    "uploaded_at": "2026-10-05T16:30:00Z"
+    "status": "pending",
+    "created_at": "2026-10-05T16:30:00Z",
+    "updated_at": "2026-10-05T16:30:00Z"
   }
 }
 ```
@@ -693,7 +695,7 @@ Digunakan untuk menampilkan informasi detail dokumen pengajuan berdasarkan ID do
 
 **DELETE** `/application-documents/{id}`
 
-Digunakan untuk menghapus dokumen pengajuan berdasarkan ID dokumen.
+Digunakan untuk menghapus dokumen pengajuan yang telah diunggah oleh pengguna.
 
 **Authentication:** Diperlukan.
 
@@ -709,7 +711,7 @@ Digunakan untuk menghapus dokumen pengajuan berdasarkan ID dokumen.
 {
   "status": "success",
   "message": "Dokumen berhasil dihapus",
-  "data": {}
+  "data": null
 }
 ```
 
@@ -718,7 +720,7 @@ Digunakan untuk menghapus dokumen pengajuan berdasarkan ID dokumen.
 - **401** — Pengguna belum terautentikasi.
 - **403** — Pengguna tidak memiliki akses ke dokumen tersebut.
 - **404** — Dokumen tidak ditemukan.
-- **409** — Dokumen tidak dapat dihapus karena terkait dengan proses pengajuan.
+- **409** — Dokumen tidak dapat dihapus karena pengajuan sudah diproses.
 
 ---
 
@@ -755,9 +757,10 @@ Digunakan untuk memperbarui dokumen pengajuan yang telah diunggah sebelumnya.
     "id": 1,
     "application_id": 1,
     "document_type": "ktp",
-    "file_name": "ktp_budi_santoso_update.pdf",
     "file_url": "/storage/documents/ktp_budi_santoso_update.pdf",
-    "uploaded_at": "2026-10-05T17:00:00Z"
+    "status": "pending",
+    "created_at": "2026-10-05T16:30:00Z",
+    "updated_at": "2026-10-05T17:00:00Z"
   }
 }
 ```
@@ -910,8 +913,7 @@ Digunakan untuk memperbarui data pengajuan sewa selama pengajuan belum diproses.
 
 ```json
 {
-  "unit_id": 2,
-  "notes": "Pengajuan diperbarui oleh pengguna"
+  "unit_id": 2
 }
 ```
 
@@ -920,7 +922,6 @@ Digunakan untuk memperbarui data pengajuan sewa selama pengajuan belum diproses.
 | Parameter | Tipe | Wajib | Keterangan |
 |---|---|---|---|
 | unit_id | integer | Tidak | ID unit yang dipilih |
-| notes | string | Tidak | Catatan tambahan pengajuan |
 
 **Success Response – 200:**
 
@@ -932,7 +933,6 @@ Digunakan untuk memperbarui data pengajuan sewa selama pengajuan belum diproses.
     "id": 1,
     "application_number": "APP-20261005-0001",
     "unit_id": 2,
-    "notes": "Pengajuan diperbarui oleh pengguna",
     "status": "draft",
     "updated_at": "2026-10-05T18:00:00Z"
   }
