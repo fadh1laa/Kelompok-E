@@ -14,6 +14,7 @@ Seluruh endpoint menggunakan format JSON dan mengikuti prinsip RESTful dengan pe
 
 ```text
 /api
+---
 
 ## 3. Authentication
 
@@ -21,6 +22,7 @@ Endpoint yang membutuhkan autentikasi menggunakan token pada HTTP header:
 
 ```text
 Authorization: Bearer <access_token>
+---
 
 ## 4. Standard Response
 
@@ -34,6 +36,7 @@ Seluruh endpoint yang berhasil menggunakan struktur response JSON yang konsisten
   "message": "Request berhasil diproses",
   "data": {}
 }
+---
 
 ### 4.2 Error Response
 
@@ -45,6 +48,7 @@ Jika terjadi kesalahan, API menggunakan struktur response berikut:
   "message": "Request tidak dapat diproses",
   "errors": {}
 }
+---
 
 ## 5. Authentication Endpoints
 
@@ -65,7 +69,7 @@ Digunakan untuk membuat akun pengguna baru.
   "password": "password123",
   "phone": "08123456789",
 }
-```
+
 
 **Request Body Parameters:**
 
