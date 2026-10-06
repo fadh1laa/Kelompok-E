@@ -1,15 +1,14 @@
-
+# API Contract — e-Hunian
 
 ## 1. Overview
 
-API e-Hunian merupakan RESTful API untuk mendukung sistem informasi
-pengelolaan rumah susun sederhana sewa (Rusunawa).
+API e-Hunian merupakan RESTful API untuk mendukung sistem informasi pengelolaan rumah susun sederhana sewa (Rusunawa).
 
-API digunakan untuk mengelola pengguna, informasi Rusunawa, unit hunian,
-fasilitas, pengajuan sewa, dokumen pengajuan, dan ulasan.
+API digunakan untuk mengelola pengguna, informasi Rusunawa, unit hunian, fasilitas, pengajuan sewa, dokumen pengajuan, dan ulasan.
 
-Seluruh endpoint menggunakan format JSON dan mengikuti prinsip RESTful
-dengan penggunaan HTTP method sesuai fungsi masing-masing endpoint.
+Seluruh endpoint menggunakan format JSON dan mengikuti prinsip RESTful dengan penggunaan HTTP method sesuai fungsi masing-masing endpoint.
+
+---
 
 ## 2. Base URL
 
@@ -65,10 +64,19 @@ Digunakan untuk membuat akun pengguna baru.
   "email": "budi@email.com",
   "password": "password123",
   "phone": "08123456789",
-  "role": "resident"
 }
+```
 
-**Success Response — 201:**
+**Request Body Parameters:**
+
+| Parameter | Tipe | Wajib | Keterangan |
+|---|---|---|---|
+| name | string | Ya | Nama pengguna |
+| email | string | Ya | Alamat email pengguna |
+| password | string | Ya | Password akun |
+| phone | string | Tidak | Nomor telepon pengguna |
+
+**Success Response – 201:**
 
 ```json
 {
@@ -81,11 +89,12 @@ Digunakan untuk membuat akun pengguna baru.
     "role": "resident"
   }
 }
+```
 
 **Error Response:**
 
-- **422** — Data registrasi tidak valid atau email sudah digunakan.
 - **400** — Request tidak dapat diproses.
+- **422** — Data registrasi tidak valid atau email sudah digunakan.
 
 ---
 
@@ -104,8 +113,16 @@ Digunakan untuk melakukan autentikasi pengguna.
   "email": "budi@email.com",
   "password": "password123"
 }
+```
 
-**Success Response — 200:**
+**Request Body Parameters:**
+
+| Parameter | Tipe | Wajib | Keterangan |
+|---|---|---|---|
+| email | string | Ya | Email pengguna |
+| password | string | Ya | Password pengguna |
+
+**Success Response – 200:**
 
 ```json
 {
@@ -121,6 +138,8 @@ Digunakan untuk melakukan autentikasi pengguna.
     }
   }
 }
+```
+
 **Error Response:**
 
 - **401** — Email atau password salah.
@@ -155,6 +174,12 @@ Digunakan untuk menampilkan daftar Rusunawa yang tersedia.
     }
   ]
 }
+```
+
+**Error Response:**
+
+- **404** — Data Rusunawa tidak ditemukan.
+- **500** — Terjadi kesalahan pada server saat mengambil data.
 
 ---
 
@@ -187,6 +212,12 @@ Digunakan untuk menampilkan informasi detail Rusunawa berdasarkan ID.
     "total_units": 142
   }
 }
+```
+
+**Error Response:**
+
+- **404** — Rusunawa tidak ditemukan.
+- **500** — Terjadi kesalahan pada server saat mengambil data.
 
 ---
 
@@ -194,7 +225,7 @@ Digunakan untuk menampilkan informasi detail Rusunawa berdasarkan ID.
 
 **GET** `/rusunawa/{id}/units`
 
-Digunakan untuk menampilkan daftar unit hunian pada suatu Rusunawa.
+Digunakan untuk menampilkan daftar unit hunian yang tersedia pada suatu Rusunawa.
 
 **Authentication:** Tidak diperlukan.
 
@@ -233,6 +264,12 @@ Digunakan untuk menampilkan daftar unit hunian pada suatu Rusunawa.
     }
   ]
 }
+```
+
+**Error Response:**
+
+- **404** — Rusunawa tidak ditemukan.
+- **500** — Terjadi kesalahan pada server saat mengambil data unit.
 
 ---
 
@@ -240,7 +277,7 @@ Digunakan untuk menampilkan daftar unit hunian pada suatu Rusunawa.
 
 **GET** `/units/{id}`
 
-Digunakan untuk menampilkan informasi detail unit hunian berdasarkan ID.
+Digunakan untuk menampilkan informasi detail unit hunian berdasarkan ID unit.
 
 **Authentication:** Tidak diperlukan.
 
@@ -267,12 +304,20 @@ Digunakan untuk menampilkan informasi detail unit hunian berdasarkan ID.
     "status": "available"
   }
 }
+```
+
+**Error Response:**
+
+- **404** — Unit tidak ditemukan.
+- **500** — Terjadi kesalahan pada server saat mengambil data unit.
+
+---
 
 ### 6.5 Get Rusunawa Facilities
 
 **GET** `/rusunawa/{id}/facilities`
 
-Digunakan untuk menampilkan daftar fasilitas yang tersedia pada Rusunawa berdasarkan ID Rusunawa.
+Digunakan untuk menampilkan daftar fasilitas yang tersedia pada suatu Rusunawa.
 
 **Authentication:** Tidak diperlukan.
 
@@ -306,7 +351,9 @@ Digunakan untuk menampilkan daftar fasilitas yang tersedia pada Rusunawa berdasa
 **Error Response:**
 
 - **404** — Rusunawa tidak ditemukan.
-- **200** — Rusunawa ditemukan tetapi belum memiliki fasilitas.
+- **500** — Terjadi kesalahan pada server saat mengambil data fasilitas.
+
+---
 
 ### 6.6 Get Facility Detail
 
@@ -339,6 +386,9 @@ Digunakan untuk menampilkan informasi detail fasilitas berdasarkan ID fasilitas.
 **Error Response:**
 
 - **404** — Fasilitas tidak ditemukan.
+- **500** — Terjadi kesalahan pada server saat mengambil data fasilitas.
+
+---
 
 ## 7. Application Endpoints
 
@@ -375,24 +425,27 @@ Digunakan untuk membuat pengajuan sewa unit Rusunawa oleh pengguna.
     "application_number": "APP-20261005-0001",
     "user_id": 1,
     "unit_id": 1,
-    "status": "submitted",
-    "submitted_at": "2026-10-05T15:00:00Z"
+    "status": "draft",
+    "created_at": "2026-10-05T15:00:00Z"
   }
 }
 ```
 
 **Error Response:**
 
-- **400** — Data pengajuan tidak valid.
 - **401** — Pengguna belum terautentikasi.
 - **404** — Unit tidak ditemukan.
 - **409** — Unit tidak tersedia atau sudah diajukan.
+- **422** — Data pengajuan tidak valid.
+
+---
 
 ### 7.2 Get My Applications
 
 **GET** `/applications`
 
-Digunakan untuk menampilkan daftar pengajuan sewa milik pengguna yang sedang login.
+Digunakan untuk menampilkan daftar pengajuan sewa.
+Resident hanya dapat melihat pengajuan miliknya sendiri, sedangkan Admin dapat melihat seluruh pengajuan.
 
 **Authentication:** Diperlukan.
 
@@ -407,8 +460,10 @@ Digunakan untuk menampilkan daftar pengajuan sewa milik pengguna yang sedang log
       "id": 1,
       "application_number": "APP-20261005-0001",
       "unit_id": 1,
-      "status": "submitted",
-      "submitted_at": "2026-10-05T15:00:00Z"
+      "unit_number": "B-0304",
+      "rusunawa_name": "Rusunawa Pasar Rumput",
+      "status": "draft",
+      "created_at": "2026-10-05T15:00:00Z"
     }
   ]
 }
@@ -417,6 +472,9 @@ Digunakan untuk menampilkan daftar pengajuan sewa milik pengguna yang sedang log
 **Error Response:**
 
 - **401** — Pengguna belum terautentikasi.
+- **500** — Terjadi kesalahan pada server saat mengambil data pengajuan.
+
+---
 
 ### 7.3 Get Application Detail
 
@@ -430,7 +488,7 @@ Digunakan untuk menampilkan detail pengajuan sewa berdasarkan ID pengajuan.
 
 | Parameter | Tipe | Keterangan |
 |---|---|---|
-| id | integer | ID Pengajuan |
+| id | integer | ID pengajuan |
 
 **Success Response – 200:**
 
@@ -443,8 +501,10 @@ Digunakan untuk menampilkan detail pengajuan sewa berdasarkan ID pengajuan.
     "application_number": "APP-20261005-0001",
     "user_id": 1,
     "unit_id": 1,
-    "status": "submitted",
-    "submitted_at": "2026-10-05T15:00:00Z"
+    "unit_number": "B-0304",
+    "rusunawa_name": "Rusunawa Pasar Rumput",
+    "status": "draft",
+    "created_at": "2026-10-05T15:00:00Z"
   }
 }
 ```
@@ -452,8 +512,10 @@ Digunakan untuk menampilkan detail pengajuan sewa berdasarkan ID pengajuan.
 **Error Response:**
 
 - **401** — Pengguna belum terautentikasi.
-- **403** — Pengguna tidak memiliki akses ke pengajuan tersebut.
 - **404** — Pengajuan tidak ditemukan.
+- **500** — Terjadi kesalahan pada server saat mengambil detail pengajuan.
+
+---
 
 ### 7.4 Cancel Application
 
@@ -491,6 +553,8 @@ Digunakan untuk membatalkan pengajuan sewa yang dibuat oleh pengguna yang sedang
 - **404** — Pengajuan tidak ditemukan.
 - **409** — Pengajuan tidak dapat dibatalkan karena status sudah berubah.
 
+---
+
 ### 7.5 Upload Application Document
 
 **POST** `/applications/{id}/documents`
@@ -507,9 +571,7 @@ Digunakan untuk mengunggah dokumen yang diperlukan dalam proses pengajuan sewa.
 
 **Request Body:**
 
-```text
-Content-Type: multipart/form-data
-```
+`Content-Type: multipart/form-data`
 
 | Parameter | Tipe | Wajib | Keterangan |
 |---|---|---|---|
@@ -540,6 +602,8 @@ Content-Type: multipart/form-data
 - **403** — Pengguna tidak memiliki akses ke pengajuan tersebut.
 - **404** — Pengajuan tidak ditemukan.
 - **422** — File tidak memenuhi ketentuan yang ditetapkan.
+
+---
 
 ### 7.6 Get Application Documents
 
@@ -579,7 +643,8 @@ Digunakan untuk menampilkan daftar dokumen yang telah diunggah pada suatu pengaj
 - **401** — Pengguna belum terautentikasi.
 - **403** — Pengguna tidak memiliki akses ke pengajuan tersebut.
 - **404** — Pengajuan tidak ditemukan.
-- **200** — Pengajuan ditemukan tetapi belum memiliki dokumen.
+
+---
 
 ### 7.7 Get Application Document Detail
 
@@ -618,11 +683,13 @@ Digunakan untuk menampilkan informasi detail dokumen pengajuan berdasarkan ID do
 - **403** — Pengguna tidak memiliki akses ke dokumen tersebut.
 - **404** — Dokumen tidak ditemukan.
 
+---
+
 ### 7.8 Delete Application Document
 
 **DELETE** `/application-documents/{id}`
 
-Digunakan untuk menghapus dokumen pengajuan yang telah diunggah oleh pengguna.
+Digunakan untuk menghapus dokumen pengajuan berdasarkan ID dokumen.
 
 **Authentication:** Diperlukan.
 
@@ -638,7 +705,7 @@ Digunakan untuk menghapus dokumen pengajuan yang telah diunggah oleh pengguna.
 {
   "status": "success",
   "message": "Dokumen berhasil dihapus",
-  "data": null
+  "data": {}
 }
 ```
 
@@ -647,7 +714,9 @@ Digunakan untuk menghapus dokumen pengajuan yang telah diunggah oleh pengguna.
 - **401** — Pengguna belum terautentikasi.
 - **403** — Pengguna tidak memiliki akses ke dokumen tersebut.
 - **404** — Dokumen tidak ditemukan.
-- **409** — Dokumen tidak dapat dihapus karena pengajuan sudah diproses.
+- **409** — Dokumen tidak dapat dihapus karena terkait dengan proses pengajuan.
+
+---
 
 ### 7.9 Update Application Document
 
@@ -665,9 +734,7 @@ Digunakan untuk memperbarui dokumen pengajuan yang telah diunggah sebelumnya.
 
 **Request Body:**
 
-```text
-Content-Type: multipart/form-data
-```
+`Content-Type: multipart/form-data`
 
 | Parameter | Tipe | Wajib | Keterangan |
 |---|---|---|---|
@@ -700,6 +767,8 @@ Content-Type: multipart/form-data
 - **409** — Dokumen tidak dapat diperbarui karena pengajuan sudah diproses.
 - **422** — File tidak memenuhi ketentuan yang ditetapkan.
 
+---
+
 ### 7.10 Submit Application
 
 **POST** `/applications/{id}/submit`
@@ -727,6 +796,18 @@ Digunakan untuk mengirim atau mengajukan kembali pengajuan sewa setelah data dan
     "submitted_at": "2026-10-05T17:15:00Z"
   }
 }
+```
+
+**Error Response:**
+
+- **401** — Pengguna belum terautentikasi.
+- **403** — Pengguna tidak memiliki akses ke pengajuan tersebut.
+- **404** — Pengajuan tidak ditemukan.
+- **409** — Pengajuan tidak dapat dikirim karena data atau dokumen belum lengkap.
+- **422** — Data pengajuan tidak memenuhi ketentuan.
+
+---
+
 ### 7.11 Get Application Status
 
 **GET** `/applications/{id}/status`
@@ -754,6 +835,15 @@ Digunakan untuk menampilkan status terbaru dari pengajuan sewa milik pengguna.
     "submitted_at": "2026-10-05T17:15:00Z"
   }
 }
+```
+
+**Error Response:**
+
+- **401** — Pengguna belum terautentikasi.
+- **403** — Pengguna tidak memiliki akses ke pengajuan tersebut.
+- **404** — Pengajuan tidak ditemukan.
+
+---
 
 ### 7.12 Get Application History
 
@@ -788,6 +878,15 @@ Digunakan untuk menampilkan riwayat perubahan status pengajuan sewa.
     }
   ]
 }
+```
+
+**Error Response:**
+
+- **401** — Pengguna belum terautentikasi.
+- **403** — Pengguna tidak memiliki akses ke pengajuan tersebut.
+- **404** — Pengajuan tidak ditemukan.
+
+---
 
 ### 7.13 Update Application
 
@@ -802,6 +901,15 @@ Digunakan untuk memperbarui data pengajuan sewa selama pengajuan belum diproses.
 | Parameter | Tipe | Keterangan |
 |---|---|---|
 | id | integer | ID Pengajuan |
+
+**Request Body:**
+
+```json
+{
+  "unit_id": 2,
+  "notes": "Pengajuan diperbarui oleh pengguna"
+}
+```
 
 **Request Body Parameters:**
 
@@ -825,6 +933,17 @@ Digunakan untuk memperbarui data pengajuan sewa selama pengajuan belum diproses.
     "updated_at": "2026-10-05T18:00:00Z"
   }
 }
+```
+
+**Error Response:**
+
+- **401** — Pengguna belum terautentikasi.
+- **403** — Pengguna tidak memiliki akses ke pengajuan tersebut.
+- **404** — Pengajuan tidak ditemukan.
+- **409** — Pengajuan tidak dapat diperbarui karena sudah diproses.
+- **422** — Data pengajuan tidak valid.
+
+---
 
 ### 7.14 Delete Application
 
@@ -853,6 +972,16 @@ Digunakan untuk membatalkan atau menghapus pengajuan sewa yang dibuat oleh pengg
     "cancelled_at": "2026-10-05T18:30:00Z"
   }
 }
+```
+
+**Error Response:**
+
+- **401** — Pengguna belum terautentikasi.
+- **403** — Pengguna tidak memiliki akses ke pengajuan tersebut.
+- **404** — Pengajuan tidak ditemukan.
+- **409** — Pengajuan tidak dapat dihapus karena sudah diproses.
+
+---
 
 ### 7.15 Approve Application
 
@@ -881,12 +1010,22 @@ Digunakan untuk menyetujui pengajuan sewa oleh petugas atau admin setelah pengaj
     "approved_at": "2026-10-05T19:00:00Z"
   }
 }
+```
+
+**Error Response:**
+
+- **401** — Pengguna belum terautentikasi.
+- **403** — Pengguna tidak memiliki akses untuk menyetujui pengajuan.
+- **404** — Pengajuan tidak ditemukan.
+- **409** — Pengajuan tidak dapat disetujui karena status pengajuan sudah berubah.
+
+---
 
 ### 7.16 Reject Application
 
 **PATCH** `/applications/{id}/reject`
 
-Digunakan untuk menolak pengajuan sewa oleh petugas atau admin setelah proses verifikasi.
+Digunakan untuk menolak pengajuan sewa oleh petugas atau admin setelah pengajuan selesai diverifikasi.
 
 **Authentication:** Diperlukan.
 
@@ -895,6 +1034,14 @@ Digunakan untuk menolak pengajuan sewa oleh petugas atau admin setelah proses ve
 | Parameter | Tipe | Keterangan |
 |---|---|---|
 | id | integer | ID Pengajuan |
+
+**Request Body:**
+
+```json
+{
+  "reason": "Dokumen persyaratan tidak lengkap"
+}
+```
 
 **Request Body Parameters:**
 
@@ -916,75 +1063,20 @@ Digunakan untuk menolak pengajuan sewa oleh petugas atau admin setelah proses ve
     "rejected_at": "2026-10-05T19:30:00Z"
   }
 }
+```
 
-### 7.17 Cancel Application
+**Error Response:**
 
-**PATCH** `/applications/{id}/cancel`
+- **401** — Pengguna belum terautentikasi.
+- **403** — Pengguna tidak memiliki akses untuk menolak pengajuan.
+- **404** — Pengajuan tidak ditemukan.
+- **409** — Pengajuan tidak dapat ditolak karena status pengajuan sudah berubah.
+- **422** — Alasan penolakan tidak valid.
 
-Digunakan untuk membatalkan pengajuan sewa oleh pengguna sebelum pengajuan diproses lebih lanjut.
+---
+## 8. Review Endpoints
 
-**Authentication:** Diperlukan.
-
-**Path Parameter:**
-
-| Parameter | Tipe | Keterangan |
-|---|---|---|
-| id | integer | ID Pengajuan |
-
-**Success Response – 200:**
-
-```json
-{
-  "status": "success",
-  "message": "Pengajuan berhasil dibatalkan",
-  "data": {
-    "id": 1,
-    "application_number": "APP-20261005-0001",
-    "status": "cancelled",
-    "cancelled_at": "2026-10-05T20:00:00Z"
-  }
-}
-
-### 7.18 Get Application History
-
-**GET** `/applications/{id}/history`
-
-Digunakan untuk menampilkan riwayat perubahan status pengajuan sewa berdasarkan ID pengajuan.
-
-**Authentication:** Diperlukan.
-
-**Path Parameter:**
-
-| Parameter | Tipe | Keterangan |
-|---|---|---|
-| id | integer | ID Pengajuan |
-
-**Success Response – 200:**
-
-```json
-{
-  "status": "success",
-  "message": "Riwayat pengajuan berhasil diambil",
-  "data": [
-    {
-      "status": "submitted",
-      "changed_at": "2026-10-05T17:15:00Z",
-      "note": "Pengajuan berhasil dikirim"
-    },
-    {
-      "status": "reviewed",
-      "changed_at": "2026-10-06T09:00:00Z",
-      "note": "Pengajuan sedang ditinjau"
-    },
-    {
-      "status": "approved",
-      "changed_at": "2026-10-05T19:00:00Z",
-      "note": "Pengajuan disetujui"
-    }
-  ]
-}
-
-### 7.19 Create Review
+### 8.1 Create Review
 
 **POST** `/rusunawa/{id}/reviews`
 
@@ -1005,12 +1097,14 @@ Digunakan untuk membuat ulasan dan memberikan rating terhadap Rusunawa.
   "rating": 4.5,
   "comment": "Rusunawa cukup nyaman dan fasilitasnya baik."
 }
+```
+
 **Request Body Parameters:**
 
 | Parameter | Tipe | Wajib | Keterangan |
 |---|---|---|---|
-| rating | decimal | Ya | Nilai rating antara 1.0 sampai 5.0 |
-| comment | string | Tidak | Komentar atau ulasan pengguna |
+| rating | decimal | Ya | Nilai rating 1.0 sampai 5.0 |
+| comment | string | Tidak | Komentar atau ulasan |
 
 **Success Response – 201:**
 
@@ -1027,22 +1121,22 @@ Digunakan untuk membuat ulasan dan memberikan rating terhadap Rusunawa.
     "created_at": "2026-10-05T20:30:00Z"
   }
 }
+```
 
 **Error Response:**
 
-- **400** — Data ulasan tidak valid.
 - **401** — Pengguna belum terautentikasi.
 - **404** — Rusunawa tidak ditemukan.
 - **409** — Pengguna sudah memberikan ulasan pada Rusunawa tersebut.
-- **422** — Rating harus berada pada rentang 1.0 sampai 5.0.
+- **422** — Rating atau komentar tidak valid.
 
 ---
 
-### 7.20 Get Rusunawa Reviews
+### 8.2 Get Rusunawa Reviews
 
 **GET** `/rusunawa/{id}/reviews`
 
-Digunakan untuk menampilkan daftar ulasan pengguna terhadap suatu Rusunawa.
+Digunakan untuk menampilkan daftar ulasan terhadap suatu Rusunawa.
 
 **Authentication:** Tidak diperlukan.
 
@@ -1072,20 +1166,23 @@ Digunakan untuk menampilkan daftar ulasan pengguna terhadap suatu Rusunawa.
       "user_id": 2,
       "rusunawa_id": 1,
       "rating": 4.0,
-      "comment": "Lokasi cukup strategis dan lingkungan bersih.",
-      "created_at": "2026-10-06T09:00:00Z"
+      "comment": "Fasilitas cukup baik dan lingkungan nyaman.",
+      "created_at": "2026-10-05T21:00:00Z"
     }
   ]
 }
+```
+
+Jika belum ada ulasan, `data` berupa array kosong.
 
 **Error Response:**
 
 - **404** — Rusunawa tidak ditemukan.
-- **200** — Rusunawa ditemukan tetapi belum memiliki ulasan.
+- **500** — Data ulasan gagal diambil.
 
 ---
 
-### 7.21 Get Review Detail
+### 8.3 Get Review Detail
 
 **GET** `/reviews/{id}`
 
@@ -1114,8 +1211,16 @@ Digunakan untuk menampilkan detail ulasan berdasarkan ID ulasan.
     "created_at": "2026-10-05T20:30:00Z"
   }
 }
+```
 
-### 7.22 Update Review
+**Error Response:**
+
+- **404** — Ulasan tidak ditemukan.
+- **500** — Data ulasan gagal diambil.
+
+---
+
+### 8.4 Update Review
 
 **PUT** `/reviews/{id}`
 
@@ -1136,8 +1241,42 @@ Digunakan untuk memperbarui ulasan yang telah dibuat oleh pengguna.
   "rating": 5.0,
   "comment": "Rusunawa sangat nyaman dan fasilitasnya lengkap."
 }
+```
 
-### 7.23 Delete Review
+**Request Body Parameters:**
+
+| Parameter | Tipe | Wajib | Keterangan |
+|---|---|---|---|
+| rating | decimal | Ya | Nilai rating 1.0 sampai 5.0 |
+| comment | string | Tidak | Komentar atau ulasan |
+
+**Success Response – 200:**
+
+```json
+{
+  "status": "success",
+  "message": "Ulasan berhasil diperbarui",
+  "data": {
+    "id": 1,
+    "user_id": 1,
+    "rusunawa_id": 1,
+    "rating": 5.0,
+    "comment": "Rusunawa sangat nyaman dan fasilitasnya lengkap.",
+    "updated_at": "2026-10-05T21:00:00Z"
+  }
+}
+```
+
+**Error Response:**
+
+- **401** — Pengguna belum terautentikasi.
+- **403** — Pengguna tidak memiliki akses ke ulasan tersebut.
+- **404** — Ulasan tidak ditemukan.
+- **422** — Data rating atau komentar tidak valid.
+
+---
+
+### 8.5 Delete Review
 
 **DELETE** `/reviews/{id}`
 
@@ -1159,10 +1298,19 @@ Digunakan untuk menghapus ulasan yang telah dibuat oleh pengguna.
   "message": "Ulasan berhasil dihapus",
   "data": null
 }
+```
 
-## 8. User Endpoints
+**Error Response:**
 
-### 8.1 Get My Profile
+- **401** — Pengguna belum terautentikasi.
+- **403** — Pengguna tidak memiliki akses ke ulasan tersebut.
+- **404** — Ulasan tidak ditemukan.
+
+---
+
+## 9. User Endpoints
+
+### 9.1 Get My Profile
 
 **GET** `/users/me`
 
@@ -1184,12 +1332,20 @@ Digunakan untuk menampilkan informasi profil pengguna yang sedang login.
     "role": "resident"
   }
 }
+```
 
-### 8.2 Update My Profile
+**Error Response:**
+
+- **401** — Pengguna belum terautentikasi.
+- **404** — Data pengguna tidak ditemukan.
+
+---
+
+### 9.2 Update My Profile
 
 **PUT** `/users/me`
 
-Digunakan untuk memperbarui informasi profil pengguna yang sedang login.
+Digunakan untuk memperbarui informasi profil pengguna.
 
 **Authentication:** Diperlukan.
 
@@ -1200,12 +1356,14 @@ Digunakan untuk memperbarui informasi profil pengguna yang sedang login.
   "name": "Budi Santoso",
   "phone": "081234567890"
 }
+```
+
 **Request Body Parameters:**
 
 | Parameter | Tipe | Wajib | Keterangan |
 |---|---|---|---|
 | name | string | Ya | Nama pengguna |
-| phone | string | Tidak | Nomor telepon pengguna |
+| phone | string | Tidak | Nomor telepon |
 
 **Success Response – 200:**
 
@@ -1221,15 +1379,18 @@ Digunakan untuk memperbarui informasi profil pengguna yang sedang login.
     "role": "resident"
   }
 }
+```
+
 **Error Response:**
 
 - **400** — Data profil tidak valid.
 - **401** — Pengguna belum terautentikasi.
 - **404** — Data pengguna tidak ditemukan.
-- **422** — Data yang diberikan tidak memenuhi ketentuan.
+- **422** — Data tidak memenuhi ketentuan.
 
 ---
-### 8.3 Change Password
+
+### 9.3 Change Password
 
 **PATCH** `/users/me/password`
 
@@ -1244,11 +1405,13 @@ Digunakan untuk mengubah password pengguna yang sedang login.
   "current_password": "password123",
   "new_password": "password456"
 }
+```
+
 **Request Body Parameters:**
 
 | Parameter | Tipe | Wajib | Keterangan |
 |---|---|---|---|
-| current_password | string | Ya | Password pengguna saat ini |
+| current_password | string | Ya | Password saat ini |
 | new_password | string | Ya | Password baru |
 
 **Success Response – 200:**
@@ -1259,17 +1422,17 @@ Digunakan untuk mengubah password pengguna yang sedang login.
   "message": "Password berhasil diubah",
   "data": null
 }
+```
+
 **Error Response:**
 
 - **400** — Data password tidak valid.
-- **401** — Pengguna belum terautentikasi atau password saat ini salah.
+- **401** — Password saat ini salah atau pengguna belum terautentikasi.
 - **422** — Password baru tidak memenuhi ketentuan.
 
 ---
 
----
-
-## 9. Role-Permission Matrix
+## 10. Role-Permission Matrix
 
 Keterangan:
 
@@ -1314,9 +1477,11 @@ Keterangan:
 
 ---
 
-## 10. Changelog
+## 11. Changelog
 
 | Version | Date | Changes |
 |---|---|---|
-| 1.0.0 | 2026-10-05 | Initial API Contract: authentication, Rusunawa, application, review, dan user endpoints. |
-| 1.0.1 | 2026-10-05 | Penambahan role-permission matrix dan penyelarasan standard response serta error handling. |
+| 1.0.0 | 2026-10-06 | Initial API Contract: authentication, Rusunawa, application, review, dan user endpoints. |
+| 1.0.1 | 2026-10-06 | Perbaikan konsistensi response, error handling, request body, dan role-permission matrix. |
+
+---
