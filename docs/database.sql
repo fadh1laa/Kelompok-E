@@ -51,7 +51,7 @@ CREATE TABLE `applications` (
   `user_id` bigint NOT NULL,
   `unit_id` bigint NOT NULL,
   `application_number` varchar(30) UNIQUE NOT NULL,
-  `status` varchar(30) NOT NULL DEFAULT 'submitted',
+  `status` varchar(30) NOT NULL DEFAULT 'draft',
   `submitted_at` timestamp,
   `created_at` timestamp NOT NULL,
   `updated_at` timestamp NOT NULL
@@ -67,6 +67,14 @@ CREATE TABLE `application_documents` (
   `updated_at` timestamp NOT NULL
 );
 
+CREATE TABLE `application_histories` (
+  `id` bigint PRIMARY KEY AUTO_INCREMENT,
+  `application_id` bigint NOT NULL,
+  `status` varchar(30) NOT NULL,
+  `note` text,
+  `changed_at` timestamp NOT NULL
+);
+
 CREATE TABLE `reviews` (
   `id` bigint PRIMARY KEY AUTO_INCREMENT,
   `user_id` bigint NOT NULL,
@@ -74,7 +82,8 @@ CREATE TABLE `reviews` (
   `rating` decimal(2,1) NOT NULL,
   `comment` text,
   `created_at` timestamp NOT NULL,
-  `updated_at` timestamp NOT NULL
+  `updated_at` timestamp NOT NULL,
+  UNIQUE (`user_id`, `rusunawa_id`)
 );
 
 ALTER TABLE `units` ADD FOREIGN KEY (`rusunawa_id`) REFERENCES `rusunawa` (`id`);
@@ -92,3 +101,5 @@ ALTER TABLE `application_documents` ADD FOREIGN KEY (`application_id`) REFERENCE
 ALTER TABLE `reviews` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 ALTER TABLE `reviews` ADD FOREIGN KEY (`rusunawa_id`) REFERENCES `rusunawa` (`id`);
+
+ALTER TABLE `application_histories` ADD FOREIGN KEY (`application_id`) REFERENCES `applications` (`id`);
